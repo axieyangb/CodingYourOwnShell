@@ -19,12 +19,12 @@ char **my_argv;      // this string array  is used to store the arguments of the
 // when you press the ctrl+c, you will stop it.
 void handle_signal(int signo)
 {
-    printf("\n[ESC] ");
+    printf("\n[Commend terminal, Please press any key to continue...] ");
     fflush(stdout);
 }
 void seperate_argv(char* tmp)
 {
-    my_argv=(char **)malloc(8*sizeof(char *));
+    my_argv=(char **)malloc(9*sizeof(char *));
 
     int first=0;
         strncat(tmp," ", 1);
@@ -63,11 +63,15 @@ void testAvailable(){
     strncat(path, "\0", 1);
    // printf("%s",path);
     if(fork() == 0) {
-       // printf("\n%s\n","child");
-            execve(path,my_argv,NULL);
+        int i=execve(path,my_argv,NULL);
+        if(i<0)
+        {
+            printf("%s: %s\n", path, "command not found");
+            exit(1);
+        }
     }
     else {
-        wait(NULL);//printf("%s\n","parent");
+        wait(NULL);
     }
 }
 void executeCommend(char* tmp)
