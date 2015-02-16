@@ -5,123 +5,120 @@
 
 #define MIN_STACK_SIZE (4)
 
-void strfreefn(ElementAddr elemaddr)
+void freeStr(MyData myData)
 {
-    free(*(char **)elemaddr);
+    free(*(char **)myData);
 }
 
-/* Create a new stack */
+/* Initialize a stack */
 Stack
-stack_create(int elemsize, PfCbFree freefn)
+initial(int eleSize, PfCbFree freefn)
 {
-	Stack stk;
-	
-	stk = malloc(sizeof(struct StackRecord));
-	
-	if ( stk == NULL) {
+	Stack myStack;
+	myStack = malloc(sizeof(struct StackRecord));
+	if ( myStack == NULL) {
 		fprintf(stderr, "Out of memory\n");
 		exit(1);
 	}
-	
-	stk->array = malloc(elemsize * MIN_STACK_SIZE);
-	if (stk->array == NULL) {
+	myStack->array = malloc(eleSize * MIN_STACK_SIZE);
+	if (myStack->array == NULL) {
 		fprintf(stderr, "Out of memory\n");
 		exit(1);
 	}
-	stk->elemsize = elemsize;
-	stk->loglength = 0; 
-	stk->alloclength = MIN_STACK_SIZE;
-    return stk;
+	myStack->eleSize = eleSize;
+	myStack->loglength = 0; 
+	myStack->alloclength = MIN_STACK_SIZE;
+    return myStack;
 }
 
 /* Dispose the stack*/
 void 
-stack_dispose(Stack stk)
+dispose(Stack myStack)
 {
-	stack_make_empty(stk);
-	free(stk->array);
-	free(stk);
+	empty(myStack);
+	free(myStack->array);
+	free(myStack);
 }
 
-/* Make the given stack empty*/
+/* Empty the given stack*/
 void 
-stack_make_empty(Stack stk)
+empty(Stack myStack)
 {
-	if ( stk->freefn ) {
+	if ( myStack->freefn ) {
 		int i;
-		for ( i = 0; i < stk->loglength; ++i) {
-			stk->freefn((char *)stk->array + 
-				    i * stk->elemsize);
+		for ( i = 0; i < myStack->loglength; ++i) {
+			myStack->freefn((char *)myStack->array + 
+				    i * myStack->eleSize);
 		}
 	}
-	stk->loglength = 0;
+	myStack->loglength = 0;
 }
 
 /* Return true if the stack is empty*/
 int 
-stack_is_empty(Stack stk)
+isEmpty(Stack myStack)
 {
-	return stk->loglength == 0;
+	return myStack->loglength == 0;
 }
 
 static void 
-stack_grow(Stack stk)
+stack_grow(Stack myStack)
 {
-	stk->alloclength *= 2;
-	stk->array = realloc(stk->array, 
-	                     stk->alloclength * stk->elemsize);
+	myStack->alloclength *= 2;
+	myStack->array = realloc(myStack->array, 
+	                     myStack->alloclength * myStack->eleSize);
 }
 
-/* Insert a new element onto stack */
+/* Insert a new data onto stack */
 void 
-push(Stack stk, ElementAddr elemaddr)
+push(Stack myStack, MyData myData)
 {
-	ElementAddr target;
-	if ( stk->loglength == stk->alloclength )
-		stack_grow(stk);
-	target = (char *)stk->array + stk->loglength * stk->elemsize;
-	memcpy(target, elemaddr, stk->elemsize);
-	stk->loglength++;	
+	MyData target;
+	if ( myStack->loglength == myStack->alloclength )
+		stack_grow(myStack);
+	target = (char *)myStack->array + myStack->loglength * myStack->eleSize;
+	memcpy(target, myData, myStack->eleSize);
+	myStack->loglength++;	
 }
 
-/* Delete the top element off the stack */
+/* Delete the top data off the stack */
 void 
-stack_pop(Stack stk)
+pop(Stack myStack)
 {
-	ElementAddr target;
-	if ( stack_is_empty(stk) ) {
+	MyData target;
+	if ( isEmpty(myStack) ) {
 		fprintf(stderr, "Empty stack\n");
 		exit(1);
 	}
-	if ( stk->freefn ) {
-		target = (char *)stk->array + 
-                         (stk->loglength-1) * stk->elemsize;
-		stk->freefn(target);
+	if ( myStack->freefn ) {
+		target = (char *)myStack->array + 
+                         (myStack->loglength-1) * myStack->eleSize;
+		myStack->freefn(target);
 	}
-	stk->loglength--;
+	myStack->loglength--;
 }
 
-/* Fetch the top element from the stack */
+/* Fetch the top data from the stack */
 void 
-stack_top(Stack stk, ElementAddr elemaddr)
+stack_top(Stack myStack, MyData myData)
 {
-	void *target = (char *)stk->array + 
-                       (stk->loglength-1) * stk->elemsize;
-	memcpy(elemaddr, target, stk->elemsize);
+	void *target = (char *)myStack->array + 
+                       (myStack->loglength-1) * myStack->eleSize;
+	memcpy(myData, target, myStack->eleSize);
 }
 
-/* Fetch & Delete the top element from the stack */
+/* Fetch & Delete the top data from the stack */
 void 
-stack_top_and_pop(Stack stk, ElementAddr elemaddr)
+top(Stack myStack, MyData myData)
 {
-	ElementAddr target;
-	if ( stack_is_empty(stk) ) {
+	MyData target;
+	if ( isEmpty(myStack) ) {
 		fprintf(stderr, "Empty stack\n");
 		exit(1);
 	}
-	target = (char *)stk->array + 
-                 (stk->loglength-1) * stk->elemsize;
-	memcpy(elemaddr, target, stk->elemsize);
-	stk->loglength--;
+	target = (char *)myStack->array + 
+                 (myStack->loglength-1) * myStack->eleSize;
+	memcpy(myData, target, myStack->eleSize);
+	myStack->loglength--;
 }
 
