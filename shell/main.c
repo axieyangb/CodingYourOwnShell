@@ -14,6 +14,62 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/stat.h>
+#include "myStack.h"
+
+
+//----------------------------------test stack-----------------------------------------------------------------------
+
+//int
+//main(int argc, char **argv)
+//{
+//    Stack int_stk, str_stk;
+//    int i;
+//    char *names[] = {
+//        "C", "C++", "Jave", "C#", "Python",
+//        "PHP", "Basic", "Objective C", "Matlab", "Golang"
+//    };
+//    
+//    /* test integer stack */
+//    printf("Test integer stack\n");
+//    int_stk = stack_create(sizeof(int), NULL);
+//    for ( i = 0; i < 10; ++i ) {
+//        stack_push(int_stk, &i);
+//    }
+//    
+//    while ( !stack_is_empty(int_stk) ) {
+//        int val;
+//        stack_top_and_pop(int_stk, &val);
+//        printf("%d\n", val);
+//    }
+//    
+//    stack_dispose(int_stk);
+//    
+//    /* test string stack */
+//    printf("Test string stack\n");
+//    str_stk = stack_create(sizeof(char *), strfreefn);
+//    for ( i = 0; i < 10; ++i ) {
+//        char *copy = strdup(names[i]);
+//        char *dest;
+//        push(str_stk, &copy);
+//    }
+//    
+//    while ( !stack_is_empty(str_stk) ) {
+//        char *dest;
+//        stack_top_and_pop(str_stk, &dest);
+//        printf("%s\n", dest);
+//        free(dest);
+//    }
+//    stack_dispose(str_stk);
+//    
+//    return 0;
+//}
+
+
+//--------------------------------test stack end here---------------------------------------------------------------
+
+
+
+
 char c = '\0';
 char **my_argv;      // this string array  is used to store the arguments of the commend
 // when you press the ctrl+c, you will stop it.
@@ -79,6 +135,26 @@ void executeCommend(char* tmp)
     testAvailable();
     
 }
+//-------------------------------------------start----------------------------------------------------
+char *revstr(char *str, size_t len)
+{
+    
+    char    *start = str;
+    char    *end = str + len - 1;
+    char    ch;
+    
+    if (str != NULL)
+    {
+        while (start < end)
+        {
+            ch = *start;
+            *start++ = *end;
+            *end-- = ch;
+        }
+    }
+    return str;
+}
+//-------------------------------------------end-------------------------------------------------
 
 int main(int argc, const char **argv, char **envp) {
    	signal(SIGINT, SIG_IGN);
@@ -86,21 +162,70 @@ int main(int argc, const char **argv, char **envp) {
 
     char tmp[100];               // a string to store the whole commend.
     bzero(tmp, 100);
+    
+    //-------------------------------------start-----------------------------------------------
 
-    printf("\n[JERRY_SHELL]:");
+//    result = system("pwd");
+//    FILE * fp;
+//    char buffer[80];
+//    fp=popen("pwd","r");
+//    fgets(buffer,sizeof(buffer),fp);
+//    pclose(fp);
+    
+    Stack str_stk,tmp_stk;
+//    char *names[] = {
+//        "C", "C++", "Jave", "C#", "Python",
+//        "PHP", "Basic", "Objective C", "Matlab", "Golang"
+//    };
+    str_stk = stack_create(sizeof(char *), strfreefn);
+    tmp_stk = stack_create(sizeof(char *), strfreefn);
+//    for ( i = 0; i < 10; ++i ) {
+//        char *copy = strdup(names[i]);
+//        char *dest;
+//        push(str_stk, &copy);
+//    }
+
+    //--------------------------------------end----------------------------------------------
+
+    printf("\n[shell]:");
     while (c !=EOF) {
         c =getchar();
         if(c!=EOF)
         {
             switch (c) {
                 case '\n': /* parse and execute. */
-                    executeCommend(tmp);
-                    bzero(tmp, sizeof(tmp));
-                    printf("\n[JERRY_SHELL]:");
+                     //-------------------------------------------start---------------------------------------------
+                    while ( !stack_is_empty(str_stk) ) {
+                        char *dest;
+                        char *d = "";
+                        char *p1 = "(";
+                        char *p2 = ")";
+                        stack_top_and_pop(str_stk, &dest);
+                        if (strcmp(&dest, p1)==0) {
+                            stack_top_and_pop(tmp_stk, &d);
+                            while ((!stack_is_empty(tmp_stk)) && strcmp(&d, p2)!=0) {
+                                strncat(tmp, &d, 1);
+                                stack_top_and_pop(tmp_stk, &d);
+                            }
+                            executeCommend(tmp);
+                            bzero(tmp, sizeof(tmp));
+                        } else {
+                            push(tmp_stk, &dest);
+                        }
+                       // free(dest);
+                    }
+                     //--------------------------------------------end--------------------------------------------
+                    
+//                    executeCommend(tmp);
+//                    bzero(tmp, sizeof(tmp));
+                    printf("\n[shell]:");
                     break;
-                default: strncat(tmp, &c, 1);
+                default: {
+                    //strncat(tmp, &c, 1);
+                    push(str_stk, &c);
+                }
                     break;
-        }
+            }
         }
     }
         printf("%s",tmp);
