@@ -181,8 +181,8 @@ int main(int argc, const char **argv, char **envp) {
 //        "C", "C++", "Jave", "C#", "Python",
 //        "PHP", "Basic", "Objective C", "Matlab", "Golang"
 //    };
-    str_stk = stack_create(sizeof(char *), strfreefn);
-    tmp_stk = stack_create(sizeof(char *), strfreefn);
+    str_stk = initial(sizeof(char *), freeStr);
+    tmp_stk = initial(sizeof(char *), freeStr);
 //    for ( i = 0; i < 10; ++i ) {
 //        char *copy = strdup(names[i]);
 //        char *dest;
@@ -199,17 +199,17 @@ int main(int argc, const char **argv, char **envp) {
             switch (c) {
                 case '\n': /* parse and execute. */
                      //-------------------------------------------start---------------------------------------------
-                    while ( !stack_is_empty(str_stk) ) {
+                    while ( !isEmpty(str_stk) ) {
                         char *dest;
                         char *d = "";
                         char *p1 = "(";
                         char *p2 = ")";
-                        stack_top_and_pop(str_stk, &dest);
+                        top(str_stk, &dest);
                         if (strcmp(&dest, p1)==0) {
-                            stack_top_and_pop(tmp_stk, &d);
-                            while ((!stack_is_empty(tmp_stk)) && strcmp(&d, p2)!=0) {
+                            top(tmp_stk, &d);
+                            while ((!isEmpty(tmp_stk)) && strcmp(&d, p2)!=0) {
                                 strncat(tmp, &d, 1);
-                                stack_top_and_pop(tmp_stk, &d);
+                                top(tmp_stk, &d);
                             }
                             executeCommend(tmp);
                             bzero(tmp, sizeof(tmp));
