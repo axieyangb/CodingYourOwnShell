@@ -146,42 +146,90 @@ void testAndExecute(){
         wait(NULL);
     }
 }
-void executeCommend(char* tmp)
-{
-   
+
+
+int preTest(int flag){
     int count=0;
-    int flag =0;
-    seperate_argv(tmp);
     if (my_argv[1]==NULL || strlen(my_argv[1])==0)
     {
+        FILE * pf;
         while(count<strlen(my_argv[0]))
         {
+            if(*(my_argv[0])=='$')
+            {
+                flag =2;
+                break;
+            }
+            
             if(*(my_argv[0]+count++)=='=')
                 flag = 1;
         }
-        if(flag !=0)
+        if(flag ==1)
         {
-             FILE * pf;
+            
             char * dir=malloc(sizeof(char)*100);
             bzero(dir, 100);
             strcpy(dir, cwd);
             strcat(dir,"/variables");
             pf=fopen(dir,"a+");
-            char *buff = (char *)malloc(sizeof(char)*strlen(my_argv[0])+1);
-            strcpy(buff, my_argv[0]);
-            strncat(buff, "\0", 1);
-            printf("%s",my_argv[0]);
-            printf("%s",(dir));
-            fflush(stdout);
-            fwrite(my_argv[0], sizeof(char),5,pf);
+            fwrite("\n", sizeof(char),1,pf);
+            fwrite(my_argv[0], sizeof(char),strlen(my_argv[0]),pf);
             fclose(pf);
             
         }
+        if(flag==2)
+        {
+            char * dir=malloc(sizeof(char)*100);
+            int new =0;
+            char c;
+            bzero(dir, 100);
+            strcpy(dir, cwd);
+            strcat(dir,"/variables");
+             pf=fopen(dir,"r");
+            char *val = malloc(sizeof(char)*10);
+            bzero(val, 10);
+            do{
+                c=fgetc(pf);
+                while(c!=EOF&& new==0)
+                {
+                    if(c=='\n')
+                    new =1;
+                    c=fgetc(pf);
+                }
+                if(new !=0&& c==*(my_argv[0]+sizeof(char)))
+                {
+                    while(c!=EOF && c!='\n')
+                    {
+                    strncat(val,&c,1);
+                        c=fgetc(pf);
+                    }
+                    new=0;
+                }
+                else
+                    new =0;
+
+            }
+            while(c!=EOF);
+            printf("%s\n\n",val);
+        }
+        
     }
-    if(flag==0)
-    testAndExecute();
+    return flag;
+}
+
+
+
+void executeCommend(char* tmp)
+{
+    int flag =0;
+    seperate_argv(tmp);
+    if(preTest(flag)==0)
+            testAndExecute();
     
 }
+
+
+
 //-------------------------------------------start----------------------------------------------------
 char *revstr(char *str, size_t len)
 {

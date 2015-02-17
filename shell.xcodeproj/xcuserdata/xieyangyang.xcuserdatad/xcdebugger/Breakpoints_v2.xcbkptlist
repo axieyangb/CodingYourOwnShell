@@ -112,27 +112,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "shell/main.c"
-            timestampString = "445836891.785863"
+            timestampString = "445839465.295523"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "176"
-            endingLineNumber = "176"
-            landmarkName = "executeCommend()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "shell/main.c"
-            timestampString = "445836891.785863"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "170"
-            endingLineNumber = "170"
+            startingLineNumber = "228"
+            endingLineNumber = "228"
             landmarkName = "executeCommend()"
             landmarkType = "7">
          </BreakpointContent>
