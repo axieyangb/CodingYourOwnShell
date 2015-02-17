@@ -26,6 +26,7 @@
 /* Begin PBXFileReference section */
 		E61B7C2A1A924EFF0099173C /* myStack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = myStack.c; sourceTree = "<group>"; };
 		E61B7C2C1A924F0E0099173C /* myStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = myStack.h; sourceTree = "<group>"; };
+		E84FC7991A92AE0900E1A8E0 /* profile */ = {isa = PBXFileReference; lastKnownFileType = text; path = profile; sourceTree = "<group>"; };
 		E8CD47311A8A966B00D6CF5F /* shell */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = shell; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8CD47341A8A966C00D6CF5F /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -60,6 +61,7 @@
 		E8CD47331A8A966B00D6CF5F /* shell */ = {
 			isa = PBXGroup;
 			children = (
+				E84FC7991A92AE0900E1A8E0 /* profile */,
 				E61B7C2C1A924F0E0099173C /* myStack.h */,
 				E61B7C2A1A924EFF0099173C /* myStack.c */,
 				E8CD47341A8A966C00D6CF5F /* main.c */,

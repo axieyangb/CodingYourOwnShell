@@ -5,7 +5,6 @@
 //  Created by xieyangyang on 2/10/15.
 //  Copyright (c) 2015 xieyangyang. All rights reserved.
 //
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -69,18 +68,30 @@
 
 
 
-
+char environment[2][155];       //store the environment variables (PATH AND HOME)
 char c = '\0';
 char **my_argv;      // this string array  is used to store the arguments of the commend
 // when you press the ctrl+c, you will stop it.
+char **environ;  //external environement viriables
+char cwd[155];
 void handle_signal(int signo)
 {
-    printf("\n[Commend terminal, Please press any key to continue...] ");
-    fflush(stdout);
+    char input=
+    printf("\n[Commend terminal, Are you sure?[y/n]] ");
+    scanf("%c",&input);
+    if(input=='y'|| input=='\n')
+    {
+
+        printf("\n[process terminal]\n ");
+                exit(0);
+    }
+    else{
+        fflush(stdout);
+    }
 }
 void seperate_argv(char* tmp)
 {
-    my_argv=(char **)malloc(9*sizeof(char *));
+    my_argv=(char **)malloc(20*sizeof(char *));
 
     int first=0;
         strncat(tmp," ", 1);
@@ -90,7 +101,7 @@ void seperate_argv(char* tmp)
     bzero(part, 100);
     while(*foo !='\0')
     {
-        if (index== 9)
+        if (index== 10)
             break;
         if(*foo == ' ')
         {
@@ -111,18 +122,22 @@ void seperate_argv(char* tmp)
     }
     
 }
-void testAvailable(){
-    char *dir="/bin/";
-    char *path=malloc(strlen(dir)+strlen(my_argv[0])-1);
-    strcpy(path,dir);
-    strcat(path,my_argv[0]);
-    strncat(path, "\0", 1);
-   // printf("%s",path);
+void testAndExecute(){
+    char ** inv_path =(char **)malloc(sizeof(char *)*2);
+    inv_path[0]=(char *)malloc(strlen(environment[0])*sizeof(char)+1);
+    inv_path[1]=(char *)malloc(strlen(environment[1])*sizeof(char)+1);
+    strcpy(inv_path[0],environment[0]);
+    strncat(inv_path[0], "\0", 1);
+    strcpy(inv_path[1],environment[1]);
+    strncat(inv_path[1], "\0", 1);
     if(fork() == 0) {
-        int i=execve(path,my_argv,NULL);
+        execve(my_argv[0],&my_argv[0],inv_path);
+        printf("%s",inv_path[0]);
+        environ=inv_path;
+        int i=execvp(my_argv[0], &my_argv[0]);
         if(i<0)
         {
-            printf("%s: %s\n", path, "command not found");
+            printf("%s: %s\n", my_argv[0], "command not found");
             exit(1);
         }
     }
@@ -133,10 +148,7 @@ void testAvailable(){
 void executeCommend(char* tmp)
 {
     seperate_argv(tmp);
-    int i=0;
-   // while(my_argv[i]!=NULL)
-   //     printf("%s  ",my_argv[i++]);
-    testAvailable();
+    testAndExecute();
     
 }
 //-------------------------------------------start----------------------------------------------------
@@ -160,7 +172,30 @@ char *revstr(char *str, size_t len)
 }
 //-------------------------------------------end-------------------------------------------------
 
+
+void readEnv()                          //read the environment vriables from the scripts
+{
+    int i=0;
+    FILE *env;
+    if(getcwd(cwd, sizeof(cwd)) == NULL)
+        exit(0);
+    
+    env=fopen(strcat(cwd,"/profile"),"r");
+    char line [255];
+    if(!env)
+    {
+        printf("could not find the profile");
+        exit(0);
+    }
+    while(fgets(line ,sizeof line,env)!=NULL)
+          {
+              strncpy(environment[i++], line, 100);
+              bzero(line, 255);
+          }
+    fclose(env);
+}
 int main(int argc, const char **argv, char **envp) {
+    readEnv();
    	signal(SIGINT, SIG_IGN);
     signal(SIGINT, handle_signal);
 
@@ -168,30 +203,32 @@ int main(int argc, const char **argv, char **envp) {
     bzero(tmp, 100);
     
     //-------------------------------------start-----------------------------------------------
-
-//    result = system("pwd");
-//    FILE * fp;
-//    char buffer[80];
-//    fp=popen("pwd","r");
-//    fgets(buffer,sizeof(buffer),fp);
-//    pclose(fp);
+    
+    //    result = system("pwd");
+    //    FILE * fp;
+    //    char buffer[80];
+    //    fp=popen("pwd","r");
+    //    fgets(buffer,sizeof(buffer),fp);
+    //    pclose(fp);
     
     Stack str_stk,tmp_stk;
-//    char *names[] = {
-//        "C", "C++", "Jave", "C#", "Python",
-//        "PHP", "Basic", "Objective C", "Matlab", "Golang"
-//    };
+    char *f = "";
+    char buf[1024];
+    //    char *names[] = {
+    //        "C", "C++", "Jave", "C#", "Python",
+    //        "PHP", "Basic", "Objective C", "Matlab", "Golang"
+    //    };
     str_stk = initial(sizeof(char *), freeStr);
     tmp_stk = initial(sizeof(char *), freeStr);
-//    for ( i = 0; i < 10; ++i ) {
-//        char *copy = strdup(names[i]);
-//        char *dest;
-//        push(str_stk, &copy);
-//    }
-
+    //    for ( i = 0; i < 10; ++i ) {
+    //        char *copy = strdup(names[i]);
+    //        char *dest;
+    //        push(str_stk, &copy);
+    //    }
+    
     //--------------------------------------end----------------------------------------------
 
-    printf("\n[shell]:");
+    printf("%s\n[shell]:",cwd);
     while (c !=EOF) {
         c =getchar();
         if(c!=EOF)
@@ -200,7 +237,7 @@ int main(int argc, const char **argv, char **envp) {
                 case '\n': /* parse and execute. */
                      //-------------------------------------------start---------------------------------------------
                     while ( !isEmpty(str_stk) ) {
-                        char *dest;
+                        char *dest;//store command string
                         char *d = "";
                         char *p1 = "(";
                         char *p2 = ")";
@@ -211,17 +248,48 @@ int main(int argc, const char **argv, char **envp) {
                                 strncat(tmp, &d, 1);
                                 top(tmp_stk, &d);
                             }
+                            FILE   *stream;
+                            FILE   *wstream;
+                            
+                            printf("tmp = %s\n",tmp);
+                            memset( buf, '\0', sizeof(buf) );//初始化buf,以免后面写如乱码到文件中
+                            stream = popen( tmp, "r" ); //将“ls －l”命令的输出 通过管道读取（“r”参数）到FILE* stream
+                            //                     wstream = fopen( "test_popen.txt", "w+"); //新建一个可写的文件
+                            
+                            fread( buf, sizeof(char), sizeof(buf), stream); //将刚刚FILE* stream的数据流读取到buf中
+                            //                    fwrite( buf, 1, sizeof(buf), wstream );//将buf中的数据写到FILE    *wstream对应的流中，也是写到文件中
+                            //                   *buf = "test_popen.txt";//-------------need to be deleted----------------------------------------------------------------------------------------------
+                            pclose( stream );
+                            fclose( wstream );
+                            
+                            //   *f = `cat jlb.sh`;
                             executeCommend(tmp);
+                            //   printf("%s",&f);
+                            push(tmp_stk, buf);
+                            
+                            printf("buf = %s\n",buf);
+                            
                             bzero(tmp, sizeof(tmp));
                         } else {
                             push(tmp_stk, &dest);
                         }
-                       // free(dest);
+                        // free(dest);
                     }
-                     //--------------------------------------------end--------------------------------------------
+                    char *e = (char *)malloc(sizeof(char)*255);
+                    bzero(e, 255);
+                    while (!isEmpty(tmp_stk)) {
+                        top(tmp_stk, &e);
+                        strcat(tmp, &e);
+                    }
                     
-//                    executeCommend(tmp);
-//                    bzero(tmp, sizeof(tmp));
+                    //   strncat(tmp, buf, sizeof(buf));
+                    
+                    printf("last tmp = %s\n",tmp);
+                    
+                    //--------------------------------------------end--------------------------------------------
+                    executeCommend(tmp);
+                    printf("executed!!!");
+                    bzero(tmp, sizeof(tmp));
                     printf("\n[shell]:");
                     break;
                 default: {

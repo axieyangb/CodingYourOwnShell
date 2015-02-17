@@ -1,3 +1,2 @@
-#cat /PROFILE
-export PATH=$PATH:/bin:usr/bin
-export HOME=$HOME:/
+PATH=/bin:/usr/bin
+HOME=/home
