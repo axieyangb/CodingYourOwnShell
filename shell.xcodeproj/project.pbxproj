@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		E61B7C2B1A924EFF0099173C /* myStack.c in Sources */ = {isa = PBXBuildFile; fileRef = E61B7C2A1A924EFF0099173C /* myStack.c */; };
+		E84FC7B01A9304EE00E1A8E0 /* test_main.c in Sources */ = {isa = PBXBuildFile; fileRef = E84FC7AE1A9304EE00E1A8E0 /* test_main.c */; };
 		E8CD47351A8A966C00D6CF5F /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = E8CD47341A8A966C00D6CF5F /* main.c */; };
 /* End PBXBuildFile section */
 
@@ -27,6 +28,10 @@
 		E61B7C2A1A924EFF0099173C /* myStack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = myStack.c; sourceTree = "<group>"; };
 		E61B7C2C1A924F0E0099173C /* myStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = myStack.h; sourceTree = "<group>"; };
 		E84FC7991A92AE0900E1A8E0 /* profile */ = {isa = PBXFileReference; lastKnownFileType = text; path = profile; sourceTree = "<group>"; };
+		E84FC7AD1A93040200E1A8E0 /* main.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
+		E84FC7AE1A9304EE00E1A8E0 /* test_main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test_main.c; sourceTree = "<group>"; };
+		E84FC7AF1A9304EE00E1A8E0 /* test_main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = test_main.h; sourceTree = "<group>"; };
+		E84FC7B11A93064500E1A8E0 /* test_helper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_helper.h; sourceTree = "<group>"; };
 		E8CD47311A8A966B00D6CF5F /* shell */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = shell; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8CD47341A8A966C00D6CF5F /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -62,8 +67,12 @@
 			isa = PBXGroup;
 			children = (
 				E84FC7991A92AE0900E1A8E0 /* profile */,
+				E84FC7B11A93064500E1A8E0 /* test_helper.h */,
 				E61B7C2C1A924F0E0099173C /* myStack.h */,
+				E84FC7AE1A9304EE00E1A8E0 /* test_main.c */,
+				E84FC7AF1A9304EE00E1A8E0 /* test_main.h */,
 				E61B7C2A1A924EFF0099173C /* myStack.c */,
+				E84FC7AD1A93040200E1A8E0 /* main.h */,
 				E8CD47341A8A966C00D6CF5F /* main.c */,
 			);
 			path = shell;
@@ -127,6 +136,7 @@
 			files = (
 				E61B7C2B1A924EFF0099173C /* myStack.c in Sources */,
 				E8CD47351A8A966C00D6CF5F /* main.c in Sources */,
+				E84FC7B01A9304EE00E1A8E0 /* test_main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

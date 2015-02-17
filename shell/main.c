@@ -14,7 +14,7 @@
 #include <sys/wait.h>
 #include <sys/stat.h>
 #include "myStack.h"
-
+#include "main.h"
 
 //----------------------------------test stack-----------------------------------------------------------------------
 
