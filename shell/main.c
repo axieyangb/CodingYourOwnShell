@@ -140,6 +140,7 @@ void testAndExecute(){
             printf("%s: %s\n", my_argv[0], "command not found");
             exit(1);
         }
+         kill(0, SIGKILL);
     }
     else {
         wait(NULL);
@@ -147,7 +148,37 @@ void testAndExecute(){
 }
 void executeCommend(char* tmp)
 {
+   
+    int count=0;
+    int flag =0;
     seperate_argv(tmp);
+    if (my_argv[1]==NULL || strlen(my_argv[1])==0)
+    {
+        while(count<strlen(my_argv[0]))
+        {
+            if(*(my_argv[0]+count++)=='=')
+                flag = 1;
+        }
+        if(flag !=0)
+        {
+             FILE * pf;
+            char * dir=malloc(sizeof(char)*100);
+            bzero(dir, 100);
+            strcpy(dir, cwd);
+            strcat(dir,"/variables");
+            pf=fopen(dir,"a+");
+            char *buff = (char *)malloc(sizeof(char)*strlen(my_argv[0])+1);
+            strcpy(buff, my_argv[0]);
+            strncat(buff, "\0", 1);
+            printf("%s",my_argv[0]);
+            printf("%s",(dir));
+            fflush(stdout);
+            fwrite(my_argv[0], sizeof(char),5,pf);
+            fclose(pf);
+            
+        }
+    }
+    if(flag==0)
     testAndExecute();
     
 }
@@ -179,8 +210,11 @@ void readEnv()                          //read the environment vriables from the
     FILE *env;
     if(getcwd(cwd, sizeof(cwd)) == NULL)
         exit(0);
-    
-    env=fopen(strcat(cwd,"/profile"),"r");
+    char * dir=malloc(sizeof(char)*100);
+    bzero(dir, 100);
+    strcpy(dir, cwd);
+    strcat(dir, "/profile");
+    env=fopen(dir,"r");
     char line [255];
     if(!env)
     {
@@ -290,7 +324,7 @@ int main(int argc, const char **argv, char **envp) {
                     executeCommend(tmp);
                     printf("executed!!!");
                     bzero(tmp, sizeof(tmp));
-                    printf("\n[shell]:");
+                    printf("%s\n[shell]:",cwd);
                     break;
                 default: {
                     //strncat(tmp, &c, 1);
