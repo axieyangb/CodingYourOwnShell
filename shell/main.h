@@ -15,5 +15,5 @@ int preTest(int flag);
 void executeCommend();
 void readEnv();
 char environment[2][155];       //store the environment variables (PATH AND HOME)
-
+char * stackStorage(Stack str_stk);
 #endif

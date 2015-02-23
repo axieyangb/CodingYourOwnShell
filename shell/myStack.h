@@ -1,7 +1,7 @@
 #ifndef _STACK_H
 #define _STACK_H
 
-typedef void *MyData;
+typedef char *MyData;
 typedef void (*PfCbFree)(MyData);
 
 typedef struct StackRecord

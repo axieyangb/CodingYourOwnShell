@@ -107,7 +107,7 @@ stack_top(Stack myStack, MyData myData)
 	memcpy(myData, target, myStack->eleSize);
 }
 
-/* Fetch & Delete the top data from the stack */
+/* Fetch and delete the top data from the stack */
 void 
 top(Stack myStack, MyData myData)
 {
