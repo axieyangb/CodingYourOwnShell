@@ -80,7 +80,6 @@ void testAndExecute(){                                      //execute addressed 
     strncat(inv_path[1], "\0", 1);
     if(fork() == 0) {
         execve(my_argv[0],&my_argv[0],inv_path);
-        printf("%s",inv_path[0]);
         environ=inv_path;
         int i=execvp(my_argv[0], &my_argv[0]);
         if(i<0)
