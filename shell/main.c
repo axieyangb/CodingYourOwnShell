@@ -80,7 +80,6 @@ void testAndExecute(){                                      //execute addressed 
     strncat(inv_path[1], "\0", 1);
     if(fork() == 0) {
         execve(my_argv[0],&my_argv[0],inv_path);
-        printf("%s",inv_path[0]);
         environ=inv_path;
         int i=execvp(my_argv[0], &my_argv[0]);
         if(i<0)
@@ -201,39 +200,7 @@ void readEnv()                          //read the environment vriables from the
           }
     fclose(env);
 }
-int main(int argc, const char **argv, char **envp) {
-    readEnv();
-   	signal(SIGINT, SIG_IGN);
-    signal(SIGINT, handle_signal);
-    
-    char tmp[100];               // a string to store the whole commend.
-    bzero(tmp, 100);
-    Stack str_stk,tmp_stk;
-    str_stk = initial(sizeof(char), freeStr);
-    tmp_stk = initial(sizeof(char), freeStr);
-    printf("%s\n[shell]:",cwd);
-    while (c !=EOF) {
-        c =getchar();
-        if(c!=EOF)
-        {
-            switch (c) {
-                case '\n': /* parse and execute. */
-                    printf("%s",stackStorage(str_stk));
-                    bzero(tmp, sizeof(tmp));
-                    printf("%s\n[shell]:",cwd);
-                    break;
-                default: {
-                    push(str_stk, &c);
-                }
-                    break;
-            }
-        }
-    }
-        printf("%s",tmp);
 
-    printf("\n");
-    return 0;
-}
 char* stackStorage(Stack str_stk)
 {
     char *character_in_stack=(char *)calloc(1,sizeof(char));
@@ -253,6 +220,19 @@ char* stackStorage(Stack str_stk)
         top(str_stk, character_in_stack);
         if (strcmp(character_in_stack, parenthesis_l)==0)
         {
+            while(result[i]!='\0')
+            {
+                if(result[i]=='\n')
+                    result[i]=' ';
+                i++;
+            }
+            i=0;
+            while(part[i]!='\0')
+            {
+                if(part[i]==',')
+                    part[i]=' ';
+                i++;
+            }
             lineWithoutBacket=0;
             strcpy(commend_wait_excuted,part);
             strcat(commend_wait_excuted, result);
@@ -279,8 +259,6 @@ char* stackStorage(Stack str_stk)
             int status = pclose(stream);
             if (status == -1) {
                 printf("ERROR");
-            } else {
-                printf("SUCCESS!");
             }
         }
         else {
@@ -300,9 +278,50 @@ char* stackStorage(Stack str_stk)
         return "";
     }
     else{
-     
-        
-    return result;
+        strncat(result,"\n\n", 2);
+        i = 0;
+        while(result[i]!='\0')
+        {
+            if(result[i]==' ')
+                result[i]='\t';
+            i++;
+        }
+       return result;
     }
 
+}
+
+int main(int argc, const char **argv, char **envp) {
+    readEnv();
+   	signal(SIGINT, SIG_IGN);
+    signal(SIGINT, handle_signal);
+    
+    char tmp[100];               // a string to store the whole commend.
+    bzero(tmp, 100);
+    Stack str_stk,tmp_stk;
+    str_stk = initial(sizeof(char), freeStr);
+    tmp_stk = initial(sizeof(char), freeStr);
+    printf("%s\n[shell]:",cwd);
+    while (c !=EOF) {
+        c =getchar();
+        if(c!=EOF)
+        {
+            switch (c) {
+                case '\n': /* parse and execute. */
+                    if(!isEmpty(str_stk))
+                    printf("%s",stackStorage(str_stk));
+                    bzero(tmp, sizeof(tmp));
+                    printf("%s\n[shell]:",cwd);
+                    break;
+                default: {
+                    push(str_stk, &c);
+                }
+                    break;
+            }
+        }
+    }
+    printf("%s",tmp);
+    
+    printf("\n");
+    return 0;
 }
