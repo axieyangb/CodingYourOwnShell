@@ -27,15 +27,16 @@ char cwd[155];
 void handle_signal(int signo)
 {
     char input=
-    printf("\n[Commend terminal, Are you sure?[y/n]] ");
+    printf("\n[ Are you sure?[y/n]] ");
     scanf("%c",&input);
     if(input=='y'|| input=='\n')
     {
 
-        printf("\n[process terminal]\n ");
+        printf("\n[Process complete]\n ");
                 exit(0);
     }
     else{
+        printf("\n Press any key to continue...");
         fflush(stdout);
     }
 }
@@ -196,9 +197,16 @@ void readEnv()                          //read the environment vriables from the
     while(fgets(line ,sizeof line,env)!=NULL)
           {
               strncpy(environment[i++], line, 100);
+              environment[i-1][strlen(environment[i-1])-1]='\0';
               bzero(line, 255);
           }
     fclose(env);
+}
+
+void setEnv_home()
+{
+    chdir(environment[1]+5);
+    strcpy(cwd, environment[1]+5);
 }
 
 char* stackStorage(Stack str_stk)
@@ -206,7 +214,8 @@ char* stackStorage(Stack str_stk)
     char *character_in_stack=(char *)calloc(1,sizeof(char));
     char *parenthesis_l = "(";                                             // a sign of "("
     char *parenthesis_r= ")";
-    char lineWithoutBacket=1;
+    int lineWithoutBacket=1;
+    int first_not_backet=0;
     char * tmp_exchange;
     int i=0;                                                        //this is used for count.
     FILE   *stream;
@@ -218,7 +227,10 @@ char* stackStorage(Stack str_stk)
     char * commend_wait_excuted=(char* )calloc(500,sizeof(char));
     while ( !isEmpty(str_stk) ) {
         top(str_stk, character_in_stack);
-        if (strcmp(character_in_stack, parenthesis_l)==0)
+        lineWithoutBacket=0;
+        if(isEmpty(str_stk))
+            first_not_backet=1;
+        if (first_not_backet==0&&strcmp(character_in_stack, parenthesis_l)==0)
         {
             while(result[i]!='\0')
             {
@@ -233,7 +245,6 @@ char* stackStorage(Stack str_stk)
                     part[i]=' ';
                 i++;
             }
-            lineWithoutBacket=0;
             strcpy(commend_wait_excuted,part);
             strcat(commend_wait_excuted, result);
             stream= popen(commend_wait_excuted, "r");
@@ -272,20 +283,31 @@ char* stackStorage(Stack str_stk)
             }
         }
     }
-    if(lineWithoutBacket)
+    if(first_not_backet)
+    {
+        i=0;
+        while(part[i]!='\0')
+        {
+            if(part[i]==',')
+                part[i]=' ';
+            i++;
+        }
+        bzero(commend_wait_excuted,500);
+        if(part[0]=='(')
+            strcpy(commend_wait_excuted,++part);
+        else
+            strcpy(commend_wait_excuted,part);
+        strcat(commend_wait_excuted, result);
+       executeCommend(commend_wait_excuted);
+        return "";
+    }
+    else if(lineWithoutBacket)
     {
         executeCommend(part);
         return "";
     }
     else{
         strncat(result,"\n\n", 2);
-        i = 0;
-        while(result[i]!='\0')
-        {
-            if(result[i]==' ')
-                result[i]='\t';
-            i++;
-        }
        return result;
     }
 
@@ -293,6 +315,7 @@ char* stackStorage(Stack str_stk)
 
 int main(int argc, const char **argv, char **envp) {
     readEnv();
+    setEnv_home();
    	signal(SIGINT, SIG_IGN);
     signal(SIGINT, handle_signal);
     
