@@ -80,6 +80,7 @@ void testAndExecute(){                                      //execute addressed 
     strncat(inv_path[1], "\0", 1);
     if(fork() == 0) {
         execve(my_argv[0],&my_argv[0],inv_path);
+        printf("%s",inv_path[0]);
         environ=inv_path;
         int i=execvp(my_argv[0], &my_argv[0]);
         if(i<0)
@@ -245,7 +246,7 @@ char* stackStorage(Stack str_stk)
     int WORD_LEN_MAX=100;
     char word[WORD_LEN_MAX];
     char *result;                                                   //结果存在这个变量里
-    result=(char* )calloc(100,sizeof(char));
+    result=(char* )calloc(1000,sizeof(char));
     char *part ="\0";
     char * commend_wait_excuted=(char* )calloc(500,sizeof(char));
     while ( !isEmpty(str_stk) ) {
@@ -257,7 +258,7 @@ char* stackStorage(Stack str_stk)
             strcat(commend_wait_excuted, result);
             stream= popen(commend_wait_excuted, "r");
             bzero(commend_wait_excuted, 500);
-            bzero(result, 100);
+            bzero(result, 1000);
             if (stream == NULL)
             {
                 printf("commends usage error !");
@@ -274,6 +275,7 @@ char* stackStorage(Stack str_stk)
                     result[i]=' ';
                 i++;
             }
+            bzero(part, strlen(part));
             int status = pclose(stream);
             if (status == -1) {
                 printf("ERROR");
@@ -284,10 +286,9 @@ char* stackStorage(Stack str_stk)
         else {
             if(strcmp(character_in_stack,parenthesis_r)!=0)
             {
-                tmp_exchange=malloc(strlen(part)+sizeof(char)+2);
+                tmp_exchange=malloc(strlen(part)+sizeof(char)+1);
                 strcpy(tmp_exchange,character_in_stack);
                 strcat(tmp_exchange, part);
-                strncat(tmp_exchange, "\0", 1);
                 part=tmp_exchange;
 
             }
@@ -299,20 +300,7 @@ char* stackStorage(Stack str_stk)
         return "";
     }
     else{
-        i=0;
-        int argNum=0;
-        while(result[i]!='\0')
-        {
-            if(i==0||(result[i-1]=='\t'&&result[i]!=' '))
-                argNum++;
-            if(result[i]==' '&&argNum%5!=0)
-                result[i]='\t';
-             if(result[i]==' '&&argNum%5==0)
-                 result[i]='\n';
-
-            i++;
-        }
-        result[strlen(result)]='\n';
+     
         
     return result;
     }
