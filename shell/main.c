@@ -24,6 +24,7 @@ char **my_argv;                                         // this string array  is
                                                         // when you press the ctrl+c, you will stop it.
 char **environ;                                         //external environement viriables
 char cwd[155];
+char fileDir[155];
 void handle_signal(int signo)
 {
     char input=
@@ -42,7 +43,7 @@ void handle_signal(int signo)
 }
 void seperate_argv(char* tmp)                           //seperate the argument variable
 {
-    my_argv=(char **)malloc(20*sizeof(char *));
+    my_argv=(char **)malloc(40*sizeof(char *));
         strncat(tmp," ", 1);                            //add a space after each command word
     char *foo = tmp;
     int index=0;
@@ -50,9 +51,9 @@ void seperate_argv(char* tmp)                           //seperate the argument 
     bzero(part, 100);
     while(*foo !='\0')
     {
-        if (index== 10)
+        if (index== 100)
             break;
-        if(*foo == ' ')
+        if(*foo == ' '&& *(foo+1)!='\0')
         {
             if(my_argv[index]==NULL)
                 my_argv[index] = (char *)malloc(strlen(part)* sizeof(char)+1);
@@ -117,11 +118,11 @@ int preTest(int flag){                      //deal with "$" symbol, and set gola
             
             char * dir=malloc(sizeof(char)*100);
             bzero(dir, 100);
-            strcpy(dir, cwd);
+            strcpy(dir, fileDir);
             strcat(dir,"/variables");
             pf=fopen(dir,"a+");
-            fwrite("\n", sizeof(char),1,pf);
             fwrite(my_argv[0], sizeof(char),strlen(my_argv[0]),pf);
+            fwrite("\n", sizeof(char),1,pf);
             fclose(pf);
             
         }
@@ -131,7 +132,7 @@ int preTest(int flag){                      //deal with "$" symbol, and set gola
             int new =0;
             char c;
             bzero(dir, 100);
-            strcpy(dir, cwd);
+            strcpy(dir, fileDir);
             strcat(dir,"/variables");
              pf=fopen(dir,"r");
             char *val = malloc(sizeof(char)*10);
@@ -144,14 +145,15 @@ int preTest(int flag){                      //deal with "$" symbol, and set gola
                     new =1;
                     c=fgetc(pf);
                 }
-                if(new !=0&& c==*(my_argv[0]+sizeof(char)))
+                if(c==*(my_argv[0]+sizeof(char)))
                 {
+                    bzero(val, sizeof(val));
                     while(c!=EOF && c!='\n')
                     {
                     strncat(val,&c,1);
                         c=fgetc(pf);
                     }
-                    new=0;
+                    new=1;
                 }
                 else
                     new =0;
@@ -181,6 +183,8 @@ void readEnv()                          //read the environment vriables from the
 {
     int i=0;
     FILE *env;
+    if(getcwd(fileDir, sizeof(fileDir)) == NULL)
+        exit(0);
     if(getcwd(cwd, sizeof(cwd)) == NULL)
         exit(0);
     char * dir=malloc(sizeof(char)*100);
