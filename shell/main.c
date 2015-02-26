@@ -21,10 +21,11 @@
 char environment[2][155];                               //store the environment variables (PATH AND HOME)
 char c = '\0';
 char **my_argv;                                         // this string array  is used to store the arguments of the commend
-                                                        // when you press the ctrl+c, you will stop it.
+// when you press the ctrl+c, you will stop it.
 char **environ;                                         //external environement viriables
 char cwd[155];
 char fileDir[155];
+int contain_parenthesis = 0;
 void handle_signal(int signo)
 {
     char input=
@@ -32,9 +33,9 @@ void handle_signal(int signo)
     scanf("%c",&input);
     if(input=='y'|| input=='\n')
     {
-
+        
         printf("\n[Process complete]\n ");
-                exit(0);
+        exit(0);
     }
     else{
         printf("\n Press any key to continue...");
@@ -43,17 +44,31 @@ void handle_signal(int signo)
 }
 void seperate_argv(char* tmp)                           //seperate the argument variable
 {
+    int flag = 1;
     my_argv=(char **)malloc(40*sizeof(char *));
-        strncat(tmp," ", 1);                            //add a space after each command word
+    if (strstr(tmp, " ")==NULL) {
+        flag = 0;
+    }
+    strncat(tmp," ", 1);                            //add a space after each command word
     char *foo = tmp;
     int index=0;
     char part[100];
     bzero(part, 100);
     while(*foo !='\0')
     {
-        if (index== 100)
+        if (index== 100 ||(*(foo+1)=='\0'&& *(foo+2)=='\0'&&flag !=0)){
+            if (contain_parenthesis==0) {
+                if(my_argv[index]==NULL)
+                    my_argv[index] = (char *)malloc(strlen(part)* sizeof(char)+1);
+                else
+                    bzero(my_argv[index], strlen(my_argv[index]));
+                strncpy(my_argv[index], part, strlen(part));
+                strncat(my_argv[index], "\0", 1);
+                bzero(part, 100);
+            }
             break;
-        if(*foo == ' '&& *(foo+1)!='\0')
+        }
+        if(*foo == ' ')
         {
             if(my_argv[index]==NULL)
                 my_argv[index] = (char *)malloc(strlen(part)* sizeof(char)+1);
@@ -63,8 +78,6 @@ void seperate_argv(char* tmp)                           //seperate the argument 
             strncat(my_argv[index], "\0", 1);
             bzero(part, 100);
             index++;
-            
-            
         }
         else
             strncat(part,foo,1);
@@ -89,7 +102,7 @@ void testAndExecute(){                                      //execute addressed 
             printf("%s: %s\n", my_argv[0], "command not found");
             exit(1);
         }
-         kill(0, SIGKILL);
+        kill(0, SIGKILL);
     }
     else {
         wait(NULL);
@@ -134,7 +147,7 @@ int preTest(int flag){                      //deal with "$" symbol, and set gola
             bzero(dir, 100);
             strcpy(dir, fileDir);
             strcat(dir,"/variables");
-             pf=fopen(dir,"r");
+            pf=fopen(dir,"r");
             char *val = malloc(sizeof(char)*10);
             bzero(val, 10);
             do{
@@ -142,7 +155,7 @@ int preTest(int flag){                      //deal with "$" symbol, and set gola
                 while(c!=EOF&& new==0)
                 {
                     if(c=='\n')
-                    new =1;
+                        new =1;
                     c=fgetc(pf);
                 }
                 if(c==*(my_argv[0]+sizeof(char)))
@@ -150,14 +163,14 @@ int preTest(int flag){                      //deal with "$" symbol, and set gola
                     bzero(val, sizeof(val));
                     while(c!=EOF && c!='\n')
                     {
-                    strncat(val,&c,1);
+                        strncat(val,&c,1);
                         c=fgetc(pf);
                     }
                     new=1;
                 }
                 else
                     new =0;
-
+                
             }
             while(c!=EOF);
             printf("%s\n\n",val);
@@ -174,7 +187,7 @@ void executeCommend(char* tmp)
     int flag =0;
     seperate_argv(tmp);
     if(preTest(flag)==0)
-            testAndExecute();
+        testAndExecute();
     
 }
 
@@ -199,11 +212,11 @@ void readEnv()                          //read the environment vriables from the
         exit(0);
     }
     while(fgets(line ,sizeof line,env)!=NULL)
-          {
-              strncpy(environment[i++], line, 100);
-              environment[i-1][strlen(environment[i-1])-1]='\0';
-              bzero(line, 255);
-          }
+    {
+        strncpy(environment[i++], line, 100);
+        environment[i-1][strlen(environment[i-1])-1]='\0';
+        bzero(line, 255);
+    }
     fclose(env);
 }
 
@@ -251,6 +264,7 @@ char* stackStorage(Stack str_stk)
             }
             strcpy(commend_wait_excuted,part);
             strcat(commend_wait_excuted, result);
+            //        printf("popen= %s",commend_wait_excuted);
             stream= popen(commend_wait_excuted, "r");
             bzero(commend_wait_excuted, 500);
             bzero(result, 1000);
@@ -263,7 +277,7 @@ char* stackStorage(Stack str_stk)
             {
                 strcat(result, word);
             }
-
+            
             while(result[i]!='\0')
             {
                 if(result[i]=='\n')
@@ -283,7 +297,7 @@ char* stackStorage(Stack str_stk)
                 strcpy(tmp_exchange,character_in_stack);
                 strcat(tmp_exchange, part);
                 part=tmp_exchange;
-
+                
             }
         }
     }
@@ -302,7 +316,7 @@ char* stackStorage(Stack str_stk)
         else
             strcpy(commend_wait_excuted,part);
         strcat(commend_wait_excuted, result);
-       executeCommend(commend_wait_excuted);
+        executeCommend(commend_wait_excuted);
         return "";
     }
     else if(lineWithoutBacket)
@@ -312,9 +326,9 @@ char* stackStorage(Stack str_stk)
     }
     else{
         strncat(result,"\n\n", 2);
-       return result;
+        return result;
     }
-
+    
 }
 
 int main(int argc, const char **argv, char **envp) {
@@ -336,12 +350,15 @@ int main(int argc, const char **argv, char **envp) {
             switch (c) {
                 case '\n': /* parse and execute. */
                     if(!isEmpty(str_stk))
-                    printf("%s",stackStorage(str_stk));
+                        printf("%s",stackStorage(str_stk));
                     bzero(tmp, sizeof(tmp));
                     printf("%s\n[shell]:",cwd);
                     break;
                 default: {
                     push(str_stk, &c);
+                    if (c=='(') {
+                        contain_parenthesis=1;
+                    }
                 }
                     break;
             }
