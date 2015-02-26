@@ -45,7 +45,7 @@ void handle_signal(int signo)
 void seperate_argv(char* tmp)                           //seperate the argument variable
 {
     int flag = 1;
-    my_argv=(char **)malloc(40*sizeof(char *));
+    my_argv=(char **)malloc(3*sizeof(char *));
     if (strstr(tmp, " ")==NULL) {
         flag = 0;
     }
@@ -91,7 +91,7 @@ void testAndExecute(){                                      //execute addressed 
     inv_path[1]=(char *)malloc(strlen(environment[1])*sizeof(char)+1);
     strcpy(inv_path[0],environment[0]);
     strncat(inv_path[0], "\0", 1);
-    strcpy(inv_path[1],environment[1]);
+    strcpy(inv_path[1],cwd);
     strncat(inv_path[1], "\0", 1);
     if(fork() == 0) {
         execve(my_argv[0],&my_argv[0],inv_path);
@@ -176,6 +176,28 @@ int preTest(int flag){                      //deal with "$" symbol, and set gola
             printf("%s\n\n",val);
         }
         
+    }
+    else if (strcmp(my_argv[0],"cd")==0)
+    {
+        flag =3;
+        if(strcmp(my_argv[1], "~")==0)
+        {
+            chdir(environment[1]+5);
+            strcpy(cwd, environment[1]+5);
+        }
+        else if(strcmp(my_argv[1], "..")==0)
+        {
+            int i=(int)strlen(cwd)-1;
+            while(cwd[i]!='/')
+                i--;
+            cwd[i]='\0';
+            chdir(cwd);
+        }
+        else
+        {
+            chdir(my_argv[1]);
+            strcpy(cwd, my_argv[1]);
+        }
     }
     return flag;
 }
@@ -339,7 +361,8 @@ int main(int argc, const char **argv, char **envp) {
     
     char tmp[100];               // a string to store the whole commend.
     bzero(tmp, 100);
-    Stack str_stk,tmp_stk;
+    Stack str_stk=(Stack)malloc(sizeof(Stack));
+    Stack tmp_stk=(Stack)malloc(sizeof(Stack));
     str_stk = initial(sizeof(char), freeStr);
     tmp_stk = initial(sizeof(char), freeStr);
     printf("%s\n[shell]:",cwd);

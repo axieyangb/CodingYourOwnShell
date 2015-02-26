@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		E61B7C2B1A924EFF0099173C /* myStack.c in Sources */ = {isa = PBXBuildFile; fileRef = E61B7C2A1A924EFF0099173C /* myStack.c */; };
 		E858924B1A9EE1AB0020D173 /* shellerror.c in Sources */ = {isa = PBXBuildFile; fileRef = E85892491A9EE1AB0020D173 /* shellerror.c */; };
-		E85892531A9EFAEF0020D173 /* test_stack.c in Sources */ = {isa = PBXBuildFile; fileRef = E85892521A9EFAEF0020D173 /* test_stack.c */; };
+		E85892561A9F95950020D173 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = E85892551A9F95950020D173 /* main.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -31,8 +31,8 @@
 		E84FC7B11A93064500E1A8E0 /* test_helper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_helper.h; sourceTree = "<group>"; };
 		E85892491A9EE1AB0020D173 /* shellerror.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = shellerror.c; sourceTree = "<group>"; };
 		E858924A1A9EE1AB0020D173 /* shellerror.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shellerror.h; sourceTree = "<group>"; };
-		E85892521A9EFAEF0020D173 /* test_stack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test_stack.c; sourceTree = "<group>"; };
-		E85892541A9EFAF70020D173 /* test_stack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_stack.h; sourceTree = "<group>"; };
+		E85892551A9F95950020D173 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		E85892571A9F95A20020D173 /* main.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
 		E8CD47311A8A966B00D6CF5F /* shell */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = shell; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -69,9 +69,9 @@
 				E84FC7991A92AE0900E1A8E0 /* profile */,
 				E84FC7B11A93064500E1A8E0 /* test_helper.h */,
 				E61B7C2C1A924F0E0099173C /* myStack.h */,
+				E85892571A9F95A20020D173 /* main.h */,
 				E85892491A9EE1AB0020D173 /* shellerror.c */,
-				E85892541A9EFAF70020D173 /* test_stack.h */,
-				E85892521A9EFAEF0020D173 /* test_stack.c */,
+				E85892551A9F95950020D173 /* main.c */,
 				E858924A1A9EE1AB0020D173 /* shellerror.h */,
 				E61B7C2A1A924EFF0099173C /* myStack.c */,
 			);
@@ -134,8 +134,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E85892561A9F95950020D173 /* main.c in Sources */,
 				E61B7C2B1A924EFF0099173C /* myStack.c in Sources */,
-				E85892531A9EFAEF0020D173 /* test_stack.c in Sources */,
 				E858924B1A9EE1AB0020D173 /* shellerror.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
