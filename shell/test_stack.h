@@ -10,5 +10,5 @@
 #define __shell__test_main__
 
 #include <stdio.h>
-
+void test_Stack();
 #endif /* defined(__shell__test_main__) */
